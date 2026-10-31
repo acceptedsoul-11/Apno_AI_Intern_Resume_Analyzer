@@ -101,6 +101,7 @@ Users can provide:
 - The job description for the position they are applying for.
 
 The AI evaluates the resume in relation to the job description and generates a structured analysis.
+
 <img width="1912" height="858" alt="image" src="https://github.com/user-attachments/assets/566e8f32-f1ef-4744-9366-c82c72b63ae1" />
 
 **Analysis includes:**
