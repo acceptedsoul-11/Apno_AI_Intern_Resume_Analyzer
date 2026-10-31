@@ -1,4 +1,5 @@
 # ApnoAI
+# Vercel link: https://sai-resumeanalyzer.vercel.app
 # 🚀 AI Career Copilot – AI-Powered Resume Analyzer
 # Note:Use your own API Key
 # Screenshots are included below
@@ -100,6 +101,7 @@ Users can provide:
 - The job description for the position they are applying for.
 
 The AI evaluates the resume in relation to the job description and generates a structured analysis.
+<img width="1912" height="858" alt="image" src="https://github.com/user-attachments/assets/566e8f32-f1ef-4744-9366-c82c72b63ae1" />
 
 **Analysis includes:**
 
@@ -112,12 +114,16 @@ The AI evaluates the resume in relation to the job description and generates a s
 | Improvement Suggestions | Recommendations to make the resume more relevant and effective. |
 
 The results are presented through an organized dashboard.
+<img width="1517" height="886" alt="Screenshot 2026-10-31 090144" src="https://github.com/user-attachments/assets/0eb617b5-4859-406d-adee-6c6bc5aae818" />
+Analysis of 3 resumes
 
 > Note: The ATS score is an AI-generated estimate, not an actual score from a company's applicant tracking system.
 
 ### 2. ✍️ AI Resume Refiner
 
 The Resume Refiner helps users improve the wording and presentation of their existing resume content.
+<img width="700" height="381" alt="Screenshot 2026-10-31 090623" src="https://github.com/user-attachments/assets/cbc81f90-0bf2-415b-bd0b-6a1b84ec9b76" />
+<img width="1427" height="550" alt="Screenshot 2026-10-31 090604" src="https://github.com/user-attachments/assets/4bf471d7-7619-4832-89ba-37afb5b8f970" />
 
 It uses the provided resume and job description to generate more relevant resume content.
 
@@ -146,6 +152,7 @@ It can help candidates:
 This feature helps users prepare for interviews with context relevant to their target role.
 
 ### 4. 📚 Analysis History
+<img width="1767" height="813" alt="Screenshot 2026-10-31 091030" src="https://github.com/user-attachments/assets/107cf8c6-ccdc-4fda-bdee-b4fe3d24ed31" />
 
 The application includes a history feature that allows users to revisit previously generated resume analyses.
 
