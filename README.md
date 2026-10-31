@@ -1,7 +1,7 @@
 # ApnoAI
 # 🚀 AI Career Copilot – AI-Powered Resume Analyzer
-Note:Use your own API Key
-Screenshots are included below
+# Note:Use your own API Key
+# Screenshots are included below
 
 An intelligent, AI-powered career assistance platform that helps job seekers improve their resumes, evaluate their compatibility with job descriptions, and prepare for interviews.
 
