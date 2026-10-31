@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#f8f7ff">
+<title>AI Career Copilot — Resume Analyzer</title>
+<style>
+:root{
+  --primary:#211b3b;--accent:#7657e8;--accent2:#ed6b9a;--accent-hover:#6243d2;
+  --bg:#f8f7fc;--card:#fff;--text:#292641;--muted:#77758d;
+  --success:#15966a;--warning:#c17a19;--danger:#d64d68;--border:#e9e5f2;
+  --shadow:0 10px 30px rgba(54,39,100,.07);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh}
+button,textarea{font:inherit}
+header{background:linear-gradient(115deg,#211b3b 0%,#39306b 55%,#7657e8 100%);color:#fff;padding:42px 20px 38px;text-align:center;position:relative;overflow:hidden}
+header:before,header:after{content:"";position:absolute;border-radius:50%;pointer-events:none}
+header:before{width:330px;height:330px;right:-70px;top:-190px;background:radial-gradient(circle,rgba(237,107,154,.45),transparent 68%)}
+header:after{width:270px;height:270px;left:-100px;bottom:-210px;background:radial-gradient(circle,rgba(128,211,255,.22),transparent 70%)}
+.header-inner{max-width:1100px;margin:auto;position:relative;z-index:1}
+.brand-pill{display:inline-flex;align-items:center;gap:7px;padding:5px 12px;border:1px solid rgba(255,255,255,.22);border-radius:999px;background:rgba(255,255,255,.09);font-size:11px;font-weight:750;letter-spacing:.7px;margin-bottom:13px}
+header h1{font-size:clamp(29px,5vw,42px);font-weight:850;letter-spacing:-1.5px;margin-bottom:8px}
+header h1 span{background:linear-gradient(90deg,#ffc0d5,#cbbcff);-webkit-background-clip:text;background-clip:text;color:transparent}
+header p{font-size:14px;color:rgba(255,255,255,.8);max-width:550px;margin:auto}
+.container{max-width:1100px;margin:0 auto;padding:30px 20px 55px}
+.section-heading{margin-bottom:17px}
+.eyebrow{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;font-weight:850;color:var(--accent);margin-bottom:4px}
+.section-heading h2{font-size:23px;letter-spacing:-.7px;color:var(--primary)}
+.section-heading p{font-size:13px;color:var(--muted);margin-top:3px}
+.input-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:17px}
+.input-card,.feature-card,.result-card{background:var(--card);border:1px solid var(--border);border-radius:17px;padding:21px;box-shadow:var(--shadow);transition:transform .22s,border-color .22s,box-shadow .22s}
+.input-card:hover,.feature-card:hover{border-color:#d6cafa;box-shadow:0 13px 34px rgba(54,39,100,.09);transform:translateY(-2px)}
+.input-card h3,.feature-card h3{font-size:14px;font-weight:800;margin-bottom:12px;display:flex;align-items:center;gap:9px;color:var(--primary)}
+.icon{width:33px;height:33px;border-radius:10px;display:grid;place-items:center;font-size:16px;background:#f0ebff}
+.input-card:nth-child(2) .icon{background:#fff0f5}
+textarea{width:100%;min-height:180px;padding:13px 14px;border:1.5px solid var(--border);border-radius:11px;font-family:inherit;font-size:13px;line-height:1.55;resize:vertical;transition:border-color .2s,box-shadow .2s;background:#fcfbff;color:var(--text)}
+textarea:focus{outline:none;border-color:#9a83f0;box-shadow:0 0 0 3px rgba(118,87,232,.1);background:#fff}
+textarea::placeholder{color:#aaa6bb}
+.actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.btn{border:0;border-radius:11px;padding:12px 18px;font-size:13px;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;transition:transform .18s,box-shadow .18s,background .18s}
+.btn:hover{transform:translateY(-2px)}
+.btn:active{transform:translateY(0)}
+.btn:disabled{opacity:.6;cursor:not-allowed;transform:none}
+.analyze-btn{width:100%;padding:15px;background:linear-gradient(100deg,var(--accent),#936ce9 58%,var(--accent2));color:#fff;box-shadow:0 7px 18px rgba(118,87,232,.22);font-size:15px}
+.analyze-btn:hover{box-shadow:0 10px 23px rgba(118,87,232,.3)}
+.btn-secondary{background:#f3efff;color:#5940bb;border:1px solid #e5dcff}
+.btn-secondary:hover{background:#ebe4ff}
+.tips-box{background:linear-gradient(100deg,#f2efff,#fff4f7);border:1px solid #e8defd;border-radius:12px;padding:13px 16px;margin:17px 0 0;font-size:12px;color:#625780}
+.tips-box strong{color:#5b43b6}
+.feature-heading{margin:30px 0 13px}
+.feature-heading h2{font-size:19px;color:var(--primary);letter-spacing:-.4px}
+.feature-heading p{font-size:12px;color:var(--muted)}
+.feature-grid{display:grid;grid-template-columns:1fr 1fr;gap:17px}
+.feature-card{padding:19px}
+.feature-card p{font-size:12px;color:var(--muted);margin:-5px 0 12px}
+.feature-card textarea{min-height:105px}
+.feature-card .btn{margin-top:10px}
+.feature-card:nth-child(2) .icon{background:#eaf8f2}
+.loading{text-align:center;padding:30px;color:var(--muted);font-size:13px;background:#fff;border:1px solid var(--border);border-radius:15px}
+.spinner{width:29px;height:29px;border:3px solid #eee9fa;border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 12px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.error-box{background:#fff1f3;border:1px solid #ffd3dc;color:#a52f4b;padding:14px 17px;border-radius:12px;margin:17px 0;font-size:13px}
+.results{margin-top:23px;display:grid;gap:14px}
+.result-card{animation:rise .42s ease both}
+@keyframes rise{from{opacity:0;transform:translateY(13px)}to{opacity:1;transform:translateY(0)}}
+.result-card h4{font-size:13px;font-weight:850;margin-bottom:13px;display:flex;align-items:center;gap:8px;color:var(--primary)}
+.score-layout{display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.score-circle{width:120px;height:120px;border-radius:50%;display:grid;place-items:center;position:relative;background:conic-gradient(var(--score-color,var(--accent)) var(--score-deg,0deg),#eeeaf6 0deg);flex:none}
+.score-circle:before{content:"";position:absolute;inset:7px;background:#fff;border-radius:50%}
+.score-inner{position:relative;text-align:center}
+.score-number{font-size:37px;font-weight:900;line-height:1;color:var(--primary)}
+.score-label{font-size:10px;color:var(--muted);margin-top:4px}
+.score-message{font-size:14px;font-weight:800;color:var(--primary)}
+.score-sub{font-size:12px;color:var(--muted);margin-top:4px;max-width:690px}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.insight-list{list-style:none}
+.insight-list li{padding:9px 0 9px 25px;position:relative;border-bottom:1px solid #f1eef7;font-size:13px}
+.insight-list li:last-child{border-bottom:0}
+.insight-list li:before{content:"✓";position:absolute;left:0;top:9px;width:17px;height:17px;background:#e5f7ef;color:var(--success);border-radius:50%;display:grid;place-items:center;font-size:10px;font-weight:900}
+.improvement-list li:before{content:"↗";background:#fff2e5;color:var(--warning)}
+.keyword-list{display:flex;flex-wrap:wrap;gap:7px}
+.keyword{background:#f3efff;color:#674bc5;padding:5px 11px;border-radius:999px;font-size:11px;font-weight:750;border:1px solid #e6ddff}
+.text-output{white-space:pre-wrap;font-size:13px;line-height:1.75;color:#39364e}
+.copy-btn{margin-top:13px}
+footer{text-align:center;padding:27px 20px;color:#9691a8;font-size:11px;border-top:1px solid var(--border);margin-top:38px}
+.toast{position:fixed;bottom:20px;right:20px;background:#292344;color:white;padding:11px 15px;border-radius:10px;font-size:12px;opacity:0;transform:translateY(8px);transition:.25s;pointer-events:none;z-index:5}
+.toast.show{opacity:1;transform:translateY(0)}
+
+.history-section{margin-top:30px}
+.history-heading{display:flex;justify-content:space-between;align-items:flex-end;gap:14px;margin-bottom:13px}
+.history-heading h2{font-size:19px;color:var(--primary);letter-spacing:-.4px}
+.history-heading p{font-size:12px;color:var(--muted);margin-top:2px}
+.history-list{display:grid;gap:9px}
+.history-item{display:flex;align-items:center;justify-content:space-between;gap:14px;background:#fff;border:1px solid var(--border);border-radius:13px;padding:13px 15px;box-shadow:var(--shadow)}
+.history-meta{min-width:0}
+.history-title{font-size:13px;font-weight:800;color:var(--primary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.history-detail{font-size:11px;color:var(--muted);margin-top:3px}
+.history-actions{display:flex;gap:7px;flex-wrap:wrap;flex:none}
+.history-actions button{border:1px solid var(--border);background:#fff;color:#6250a6;border-radius:8px;padding:6px 9px;font-size:11px;font-weight:750}
+.history-actions button:hover{background:#f4f0ff}
+.history-empty{padding:18px;background:#fff;border:1px dashed #dcd5ec;border-radius:12px;color:var(--muted);font-size:12px;text-align:center}
+@media(max-width:600px){.history-heading{align-items:flex-start;flex-direction:column}.history-item{align-items:flex-start;flex-direction:column;width:100%}.history-actions{width:100%}}
+
+@media(max-width:760px){.input-grid,.feature-grid,.two-col{grid-template-columns:1fr}header{padding:34px 17px}.container{padding:23px 14px 40px}.input-card{padding:17px}.section-heading h2{font-size:21px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<header>
+  <div class="header-inner">
+    <div class="brand-pill">✦ YOUR AI-POWERED CAREER ASSISTANT</div>
+    <h1>AI Career <span>Copilot</span></h1>
+    <p>Make your resume stand out, understand your fit, and walk into interviews with confidence.</p>
+  </div>
+</header>
+
+<div class="container">
+  <div class="section-heading">
+    <div class="eyebrow">01 · Resume match</div>
+    <h2>Let's get you application-ready.</h2>
+    <p>Paste your resume and the job description to get tailored, actionable feedback.</p>
+  </div>
+
+  <div class="input-grid">
+    <div class="input-card">
+      <h3><span class="icon">📄</span> Your Resume</h3>
+      <textarea id="resume" placeholder="Paste your full resume text here...&#10;&#10;Include:&#10;- Experience&#10;- Skills&#10;- Education&#10;- Projects"></textarea>
+    </div>
+    <div class="input-card">
+      <h3><span class="icon">💼</span> Job Description</h3>
+      <textarea id="jobDesc" placeholder="Paste the job description here...&#10;&#10;Include:&#10;- Job title&#10;- Required skills&#10;- Responsibilities&#10;- Qualifications"></textarea>
+    </div>
+  </div>
+
+  <button id="analyzeBtn" class="btn analyze-btn" onclick="analyzeResume()">✦ Analyze my resume</button>
+
+  <div class="tips-box">
+    <strong>Quick tip:</strong> Use the complete resume and job description for more meaningful keyword matching and recommendations.
+  </div>
+
+  <section class="history-section" aria-label="Saved analysis history">
+    <div class="history-heading">
+      <div>
+        <div class="eyebrow">03 · Your workspace</div>
+        <h2>Analysis history</h2>
+        <p>Your recent resume reviews are saved in this browser.</p>
+      </div>
+      <button class="btn btn-secondary" onclick="exportCurrentPDF()">↓ Export latest PDF</button>
+    </div>
+    <div id="historyList" class="history-list"></div>
+  </section>
+
+  <div class="feature-heading">
+    <div class="eyebrow">02 · Extra tools</div>
+    <h2>A little extra career prep.</h2>
+    <p>Two focused tools to help you polish your application and prepare for the next round.</p>
+  </div>
+
+  <div class="feature-grid">
+    <div class="feature-card">
+      <h3><span class="icon">✨</span> Resume Refiner</h3>
+      <p>Make your bullet points clearer, stronger and more impact-focused — without inventing achievements.</p>
+      <textarea id="refineInput" placeholder="Paste the resume bullets or section you want to improve..."></textarea>
+      <button id="refineBtn" class="btn btn-secondary" onclick="refineResume()">Refine my writing ↗</button>
+    </div>
+    <div class="feature-card">
+      <h3><span class="icon">🎯</span> Interview Prep</h3>
+      <p>Get role-specific technical and behavioral questions with useful answer guidance.</p>
+      <textarea id="interviewFocus" placeholder="Optional focus area: Java, DSA, React, behavioral round..."></textarea>
+      <button id="interviewBtn" class="btn btn-secondary" onclick="prepareInterview()">Prepare me ↗</button>
+    </div>
+  </div>
+
+  <div id="results" class="results"></div>
+  <div id="toolResults" class="results"></div>
+</div>
+
+<footer>
+  <p>Built with care · AI Career Copilot · Powered by Google Gemini</p>
+</footer>
+<div class="toast" id="toast"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.2/jspdf.umd.min.js"></script>
+<script>
+/* Paste your NEW Gemini API key below.
+   A key in client-side HTML is visible to anyone who can inspect the page.
+   Restrict the key in Google AI Studio and do not publish this file with an unrestricted key. */
+const GEMINI_API_KEY = "enter your key";
+const GEMINI_MODEL = "gemini-3.8-flash";
+
+const $ = id => document.getElementById(id);
+const value = id => $(id).value.trim();
+
+function escapeHTML(input){
+  return String(input ?? "").replace(/[&<>"']/g, ch => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  }[ch]));
+}
+function showToast(message){
+  const toast=$("toast");toast.textContent=message;toast.classList.add("show");
+  clearTimeout(showToast.timer);showToast.timer=setTimeout(()=>toast.classList.remove("show"),2400);
+}
+function loading(target,message){
+  $(target).innerHTML=`<div class="loading"><div class="spinner"></div>${escapeHTML(message)}</div>`;
+}
+function showError(target,message){
+  $(target).innerHTML=`<div class="error-box"><strong>Couldn't complete that request.</strong><br>${escapeHTML(message)}</div>`;
+}
+async function callGemini(prompt,temperature=.35){
+  if(!GEMINI_API_KEY || GEMINI_API_KEY.includes("PASTE_YOUR")) {
+    throw new Error("Add your Gemini API key in the GEMINI_API_KEY constant near the bottom of this file.");
+  }
+
+  const url=`https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}`;
+  const requestBody={
+    contents:[{parts:[{text:prompt}]}],
+    generationConfig:{temperature,maxOutputTokens:2800}
+  };
+
+  const maxAttempts=4;
+  for(let attempt=1; attempt<=maxAttempts; attempt++){
+    let response;
+    let data={};
+
+    try{
+      response=await fetch(url,{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify(requestBody)
+      });
+      data=await response.json().catch(()=>({}));
+    }catch(networkError){
+      if(attempt===maxAttempts){
+        throw new Error("Couldn't reach Gemini. Check your internet connection and try again.");
+      }
+      await new Promise(resolve=>setTimeout(resolve,2000*Math.pow(2,attempt-1)));
+      continue;
+    }
+
+    if(response.ok){
+      const resultText=data.candidates?.[0]?.content?.parts?.map(part=>part.text||"").join("").trim();
+      if(!resultText) throw new Error("Gemini returned an empty response. Please try again.");
+      return resultText;
+    }
+
+    const status=response.status;
+    const apiMessage=data.error?.message || `Gemini API error (${status}).`;
+
+    // Retry temporary capacity, rate-limit and server errors.
+    const temporary=[429,500,502,503,504].includes(status);
+    if(temporary && attempt<maxAttempts){
+      const retryAfter=Number(response.headers.get("Retry-After"));
+      const waitMs=Number.isFinite(retryAfter) && retryAfter>0
+        ? Math.min(retryAfter*1000,15000)
+        : 2000*Math.pow(2,attempt-1);
+      await new Promise(resolve=>setTimeout(resolve,waitMs));
+      continue;
+    }
+
+    if(status===503 || status===429){
+      throw new Error("Gemini is experiencing high demand or rate limits right now. Your resume and job description are still in the fields. Please wait a little and try again.");
+    }
+    if(status===400 || status===404){
+      throw new Error(`${apiMessage} Check that the configured Gemini model supports generateContent.`);
+    }
+    if(status===401 || status===403){
+      throw new Error("Gemini rejected the API key. Check that it is valid and that the Generative Language API is enabled.");
+    }
+    throw new Error(apiMessage);
+  }
+
+  throw new Error("Gemini is temporarily unavailable. Please try again in a minute.");
+}
+function parseJSON(text){
+  const clean=text.replace(/```json/gi,"```").replace(/```/g,"").trim();
+  const start=clean.indexOf("{"),end=clean.lastIndexOf("}");
+  if(start<0||end<=start) throw new Error("The AI response was not valid JSON. Please try again.");
+  return JSON.parse(clean.slice(start,end+1));
+}
+function renderList(items){
+  return (Array.isArray(items)?items:[]).map(item=>`<li>${escapeHTML(item)}</li>`).join("");
+}
+
+
+const HISTORY_STORAGE_KEY = "careerCopilotHistory_v1";
+let latestHistoryId = null;
+
+function getHistory(){
+  try {
+    const parsed = JSON.parse(localStorage.getItem(HISTORY_STORAGE_KEY) || "[]");
+    return Array.isArray(parsed) ? parsed : [];
+  } catch { return []; }
+}
+function setHistory(items){
+  try {
+    localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(items.slice(0,30)));
+    renderHistory();
+  } catch {
+    showToast("Browser storage is full. Export a PDF and remove older history items.");
+  }
+}
+function saveAnalysisToHistory(analysis, resume, jobDesc){
+  const now = new Date();
+  const firstLine = jobDesc.split(/\n/).map(line=>line.trim()).find(Boolean) || "Resume analysis";
+  const item = {
+    id: `${Date.now()}_${Math.random().toString(36).slice(2,7)}`,
+    createdAt: now.toISOString(),
+    title: firstLine.slice(0,75),
+    score: Math.max(0,Math.min(100,Number(analysis.ats_score)||0)),
+    resume, jobDesc, analysis,
+    refinedText: "",
+    interviewText: ""
+  };
+  const items = getHistory();
+  items.unshift(item);
+  latestHistoryId = item.id;
+  setHistory(items);
+}
+function updateLatestHistory(field, content){
+  if(!latestHistoryId) return;
+  const items = getHistory();
+  const item = items.find(entry=>entry.id===latestHistoryId);
+  if(item){ item[field] = content; setHistory(items); }
+}
+function renderHistory(){
+  const host = $("historyList");
+  if(!host) return;
+  const items = getHistory();
+  if(!items.length){
+    host.innerHTML = '<div class="history-empty">No saved analyses yet. Run your first resume analysis and it will appear here.</div>';
+    return;
+  }
+  host.innerHTML = items.map(item=>{
+    const date = new Date(item.createdAt).toLocaleString();
+    return `<div class="history-item">
+      <div class="history-meta">
+        <div class="history-title">${escapeHTML(item.title || "Resume analysis")}</div>
+        <div class="history-detail">${escapeHTML(date)} · ATS score: <strong>${Number(item.score)||0}/100</strong></div>
+      </div>
+      <div class="history-actions">
+        <button onclick="openHistoryItem('${item.id}')">Open</button>
+        <button onclick="exportHistoryPDF('${item.id}')">PDF</button>
+        <button onclick="deleteHistoryItem('${item.id}')">Delete</button>
+      </div>
+    </div>`;
+  }).join("");
+}
+function openHistoryItem(id){
+  const item = getHistory().find(entry=>entry.id===id);
+  if(!item) return;
+  latestHistoryId = item.id;
+  $("resume").value = item.resume || "";
+  $("jobDesc").value = item.jobDesc || "";
+  renderResults(item.analysis);
+  let extras = "";
+  if(item.refinedText) extras += `<div class="result-card"><h4>✨ Saved refined resume content</h4><div class="text-output">${escapeHTML(item.refinedText)}</div></div>`;
+  if(item.interviewText) extras += `<div class="result-card"><h4>🎯 Saved interview preparation</h4><div class="text-output">${escapeHTML(item.interviewText)}</div></div>`;
+  $("toolResults").innerHTML = extras;
+  $("results").scrollIntoView({behavior:"smooth",block:"start"});
+}
+function deleteHistoryItem(id){
+  const items = getHistory().filter(entry=>entry.id!==id);
+  if(latestHistoryId===id) latestHistoryId=null;
+  setHistory(items);
+  showToast("History item deleted.");
+}
+function addPDFText(doc, title, content, y){
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const margin = 18;
+  doc.setFont("helvetica","bold");
+  doc.setFontSize(12);
+  doc.setTextColor(54,42,96);
+  doc.text(title,margin,y);
+  y += 7;
+  doc.setFont("helvetica","normal");
+  doc.setFontSize(9.5);
+  doc.setTextColor(55,55,70);
+  const lines = doc.splitTextToSize(String(content || "Not provided"), pageWidth - margin*2);
+  for(const line of lines){
+    if(y > 278){ doc.addPage(); y=20; }
+    doc.text(line,margin,y);
+    y += 5;
+  }
+  return y + 6;
+}
+function exportHistoryPDF(id){
+  const item = getHistory().find(entry=>entry.id===id);
+  if(!item){showToast("That history item could not be found.");return;}
+  exportItemPDF(item);
+}
+function exportCurrentPDF(){
+  let item = latestHistoryId ? getHistory().find(entry=>entry.id===latestHistoryId) : null;
+  if(!item){
+    const items=getHistory();
+    item=items[0] || null;
+  }
+  if(!item){showToast("Run an analysis first to create a PDF report.");return;}
+  exportItemPDF(item);
+}
+function exportItemPDF(item){
+  if(!window.jspdf?.jsPDF){
+    showToast("PDF library did not load. Check your internet connection and reload the page.");
+    return;
+  }
+  const {jsPDF}=window.jspdf;
+  const doc=new jsPDF({unit:"mm",format:"a4"});
+  const score=Number(item.analysis?.ats_score)||0;
+  doc.setFillColor(42,32,78);
+  doc.rect(0,0,210,39,"F");
+  doc.setTextColor(255,255,255);
+  doc.setFont("helvetica","bold");
+  doc.setFontSize(19);
+  doc.text("AI Career Copilot",18,18);
+  doc.setFont("helvetica","normal");
+  doc.setFontSize(9);
+  doc.text("Resume analysis report",18,26);
+  doc.text(new Date(item.createdAt).toLocaleString(),18,33);
+  let y=51;
+  doc.setTextColor(42,32,78);
+  doc.setFont("helvetica","bold");
+  doc.setFontSize(14);
+  doc.text(`ATS Match Score: ${score}/100`,18,y);
+  y+=12;
+  y=addPDFText(doc,"JOB / ROLE",item.title,y);
+  y=addPDFText(doc,"AI SUMMARY",item.analysis?.summary,y);
+  y=addPDFText(doc,"STRENGTHS",(item.analysis?.strengths||[]).map(x=>"• "+x).join("\n"),y);
+  y=addPDFText(doc,"MISSING KEYWORDS",(item.analysis?.missing_keywords||[]).join(", ") || "None identified",y);
+  y=addPDFText(doc,"RECOMMENDED IMPROVEMENTS",(item.analysis?.improvements||[]).map(x=>"• "+x).join("\n"),y);
+  if(item.refinedText) y=addPDFText(doc,"RESUME REFINEMENT",item.refinedText,y);
+  if(item.interviewText) y=addPDFText(doc,"INTERVIEW PREPARATION",item.interviewText,y);
+  doc.setFontSize(8);
+  doc.setTextColor(130,125,145);
+  doc.text("Generated by AI Career Copilot. Review AI suggestions for accuracy before use.",18,289);
+  const safeName=(item.title||"career-analysis").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"").slice(0,38) || "career-analysis";
+  doc.save(`career-copilot-${safeName}.pdf`);
+}
+
+async function analyzeResume(){
+  const resume=value("resume"),jobDesc=value("jobDesc"),button=$("analyzeBtn");
+  if(resume.length<50||jobDesc.length<50){showError("results","Please paste a detailed resume and complete job description (at least 50 characters each).");return;}
+  button.disabled=true;button.textContent="Analysing your resume…";loading("results","Matching your experience to the role…");
+  const prompt=`You are an expert ATS resume reviewer. Compare the resume with the job description. Return ONLY valid JSON with exactly these fields: ats_score (integer 0-100), summary (2-3 sentences), strengths (array of 3-5 concise strings), missing_keywords (array of keywords truly present in the job description but absent from the resume), improvements (array of 3-5 specific actionable suggestions). Be specific and honest. Never invent skills, metrics, experience or qualifications. Treat the score as an estimate, not a guarantee of how a real ATS works.\n\nRESUME:\n${resume}\n\nJOB DESCRIPTION:\n${jobDesc}`;
+  try{const analysis=parseJSON(await callGemini(prompt));saveAnalysisToHistory(analysis,resume,jobDesc);renderResults(analysis);}
+  catch(error){showError("results",error.message);}
+  finally{button.disabled=false;button.textContent="✦ Analyze my resume";}
+}
+function renderResults(a){
+  const score=Math.max(0,Math.min(100,Number(a.ats_score)||0));
+  const color=score>=80?"#15966a":score>=60?"#c17a19":"#d64d68";
+  const message=score>=80?"Strong alignment with this role":score>=60?"Good foundation — a few gaps to work on":"Some important gaps to address";
+  $("results").innerHTML=`
+    <div class="result-card">
+      <h4>🎯 ATS Match Score</h4>
+      <div class="score-layout">
+        <div class="score-circle" style="--score-deg:${score*3.6}deg;--score-color:${color}">
+          <div class="score-inner"><div class="score-number">${score}</div><div class="score-label">OUT OF 100</div></div>
+        </div>
+        <div><div class="score-message">${escapeHTML(message)}</div><p class="score-sub">${escapeHTML(a.summary||"No summary returned.")}</p></div>
+      </div>
+    </div>
+    <div class="two-col">
+      <div class="result-card"><h4>✅ What your resume does well</h4><ul class="insight-list">${renderList(a.strengths)}</ul></div>
+      <div class="result-card"><h4>💡 Recommended improvements</h4><ul class="insight-list improvement-list">${renderList(a.improvements)}</ul></div>
+    </div>
+    <div class="result-card"><h4>🔎 Missing or underrepresented keywords</h4>
+      <div class="keyword-list">${(Array.isArray(a.missing_keywords)?a.missing_keywords:[]).map(k=>`<span class="keyword">${escapeHTML(k)}</span>`).join("")||"<span class='text-output'>No major missing keywords identified.</span>"}</div>
+    </div>`;
+  $("results").scrollIntoView({behavior:"smooth",block:"start"});
+}
+async function refineResume(){
+  const source=value("refineInput")||value("resume");
+  if(source.length<20){showError("toolResults","Paste some resume bullet points in the Resume Refiner, or fill in the main resume field first.");return;}
+  const button=$("refineBtn");button.disabled=true;button.textContent="Refining…";loading("toolResults","Polishing your resume wording…");
+  const prompt=`Act as a professional resume editor. Rewrite the following content into concise, strong, ATS-friendly resume bullets. Preserve the candidate's actual meaning. Do not invent numbers, results, tools, responsibilities or achievements. Where a metric would help but is missing, use a note such as [add a real metric if available]. Return a short heading, the rewritten bullets, and a brief verification note if needed.\n\nCONTENT:\n${source}`;
+  try{const text=await callGemini(prompt,.4);updateLatestHistory("refinedText",text);$("toolResults").innerHTML=`<div class="result-card"><h4>✨ Refined resume content</h4><div class="text-output" id="refinedText">${escapeHTML(text)}</div><button class="btn btn-secondary copy-btn" onclick="copyResult('refinedText')">Copy refined text</button></div>`;$("toolResults").scrollIntoView({behavior:"smooth",block:"start"});}
+  catch(error){showError("toolResults",error.message);}
+  finally{button.disabled=false;button.textContent="Refine my writing ↗";}
+}
+async function prepareInterview(){
+  const resume=value("resume"),jobDesc=value("jobDesc"),focus=value("interviewFocus");
+  if(jobDesc.length<30){showError("toolResults","Add the job description above so the questions can be tailored to the role.");return;}
+  const button=$("interviewBtn");button.disabled=true;button.textContent="Preparing…";loading("toolResults","Putting together your interview practice…");
+  const prompt=`You are an interview coach. Based on this job description, create an entry-level interview practice pack with 5 technical or role-specific questions and 3 behavioral questions. Give concise answer guidance for each, then add a short preparation checklist. If a resume is provided, suggest truthful examples drawn only from it. Never invent candidate experience. Focus area: ${focus||"balanced coverage"}.\n\nRESUME:\n${resume||"Not provided"}\n\nJOB DESCRIPTION:\n${jobDesc}`;
+  try{const text=await callGemini(prompt,.45);updateLatestHistory("interviewText",text);$("toolResults").innerHTML=`<div class="result-card"><h4>🎯 Your interview practice pack</h4><div class="text-output" id="interviewText">${escapeHTML(text)}</div><button class="btn btn-secondary copy-btn" onclick="copyResult('interviewText')">Copy interview prep</button></div>`;$("toolResults").scrollIntoView({behavior:"smooth",block:"start"});}
+  catch(error){showError("toolResults",error.message);}
+  finally{button.disabled=false;button.textContent="Prepare me ↗";}
+}
+async function copyResult(id){
+  try{await navigator.clipboard.writeText($(id).innerText);showToast("Copied to clipboard.");}
+  catch{showToast("Clipboard access was blocked by your browser.");}
+}
+renderHistory();
+</script>
+</body>
+</html>
